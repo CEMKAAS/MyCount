@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/refresg"
+        android:contentDescription="Обновить"
+        android:icon="@drawable/baseline_refresh_24"
+        android:title="Обновить"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/setting"
+        android:contentDescription="Настройка"
+        android:icon="@drawable/baseline_settings_24"
+        android:title="Настройка"
+        app:showAsAction="ifRoom" />
+
+
+</menu>
