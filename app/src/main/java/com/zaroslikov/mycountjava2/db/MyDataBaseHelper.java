@@ -6,11 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.util.ScopeUtil;
 import com.zaroslikov.mycountjava2.MainActivity;
 
-    public class MyDataBaseHelper extends SQLiteOpenHelper {
+import java.util.Calendar;
+
+public class MyDataBaseHelper extends SQLiteOpenHelper {
         private Context context;
 
         public MyDataBaseHelper(Context context) {
@@ -42,13 +45,15 @@ import com.zaroslikov.mycountjava2.MainActivity;
         }
 
 
-        public Cursor readProject() {
-            String query = "SELECT * FROM " + MyConstanta.TABLE_NAME;
+        public Cursor lastReadProject() {
+            String query = "SELECT * FROM " + MyConstanta.TABLE_NAME +
+                    " Where " + MyConstanta.LASTCOUNT + "=?";
+
             SQLiteDatabase db = this.getReadableDatabase();
 
             Cursor cursor = null;
             if (db != null) {
-                cursor = db.rawQuery(query, null);
+                cursor = db.rawQuery(query, new String[]{String.valueOf(1)});
             }
             return cursor;
         }
@@ -64,6 +69,30 @@ import com.zaroslikov.mycountjava2.MainActivity;
             cv.put(MyConstanta.TIME, time);
             db.insert(MyConstanta.TABLE_NAME, null, cv);
         }
+
+
+        public void updateToCount(int idCount, int count, int lastCount) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+
+            Calendar calendar = Calendar.getInstance();
+            String time = (calendar.get(Calendar.DAY_OF_MONTH)) + "." + (calendar.get(Calendar.MONTH) + 1)+ "." + (calendar.get(Calendar.YEAR));
+
+            cv.put(MyConstanta.COUNT, count);
+            cv.put(MyConstanta.LASTCOUNT, lastCount);
+            long id = db.update(MyConstanta.TABLE_NAME, cv, "id=?", new String[]{String.valueOf(idCount)});
+
+            if (id == -1) {
+                Toast.makeText(context, "Ошибка!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "Успешно обновлено!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
+
+
+
 
         //        public Cursor selectProductJoin(int propertyId, String productName, String tableName, String suffix) {
 //            String query = "SELECT " + MyConstanta.TITLEPRODUCT +
