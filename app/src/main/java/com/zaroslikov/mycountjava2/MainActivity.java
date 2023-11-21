@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton plus, minus;
     private int countPush;
     private int stepPush;
-    private BottomSheetDialog bottomSheetDialog;
+    private BottomSheetDialog bottomSheetDialogSetting, bottomSheetDialogList;
     private String appBarTitle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
         plus = findViewById(R.id.button_plus);
         minus = findViewById(R.id.button_minus);
 
-
+        showBottomSheetList();
+        showBottomSheetSetting();
 
         Cursor cursor = myDB.lastReadProject();
 
@@ -60,9 +62,10 @@ public class MainActivity extends AppCompatActivity {
         appBar.setOnMenuItemClickListener(item -> {
             int position = item.getItemId();
             if (position == R.id.refresg) {
-                bottomSheetDialog.show();
+                countPush = 0;
+                Toast.makeText(this, "Обновление счета", Toast.LENGTH_SHORT).show();
             } else if (position == R.id.setting) {
-                bottomSheetDialog.show();
+                bottomSheetDialogSetting.show();
             }
             return true;
         });
@@ -72,24 +75,6 @@ public class MainActivity extends AppCompatActivity {
                 bottomSheetDialog.show();
             }
         });
-
-        //Добавляем bottobSheet
-        public void showBottomSheetDialog() {
-
-            bottomSheetDialog = new BottomSheetDialog(this);
-            bottomSheetDialog.setContentView(R.layout.fragment_bottom);
-
-//            animalsSpinerSheet = bottomSheetDialog.findViewById(R.id.menu);
-//            categorySpinerSheet = bottomSheetDialog.findViewById(R.id.menu2);
-//
-//            animalsSpinerSheet.stVisibility(View.GONE);
-//            categorySpinerSheet.setVisibility(View.GONE);
-//
-//            dataSheet = bottomSheetDialog.findViewById(R.id.data_sheet);
-//            buttonSheet = bottomSheetDialog.findViewById(R.id.button_sheet);
-        }
-
-
 
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,4 +95,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    //Добавляем bottobSheet
+    public void showBottomSheetSetting() {
+
+        bottomSheetDialogSetting = new BottomSheetDialog(this);
+        bottomSheetDialogSetting.setContentView(R.layout.fragment_bottom);
+
+//            animalsSpinerSheet = bottomSheetDialog.findViewById(R.id.menu);
+//            categorySpinerSheet = bottomSheetDialog.findViewById(R.id.menu2);
+//
+//            animalsSpinerSheet.stVisibility(View.GONE);
+//            categorySpinerSheet.setVisibility(View.GONE);
+//
+//            dataSheet = bottomSheetDialog.findViewById(R.id.data_sheet);
+//            buttonSheet = bottomSheetDialog.findViewById(R.id.button_sheet);
+    }
+
+    public void showBottomSheetList() {
+
+        bottomSheetDialogList = new BottomSheetDialog(this);
+        bottomSheetDialogList.setContentView(R.layout.fragment_setting_bottom);
+
+//            animalsSpinerSheet = bottomSheetDialog.findViewById(R.id.menu);
+//            categorySpinerSheet = bottomSheetDialog.findViewById(R.id.menu2);
+//
+//            animalsSpinerSheet.stVisibility(View.GONE);
+//            categorySpinerSheet.setVisibility(View.GONE);
+//
+//            dataSheet = bottomSheetDialog.findViewById(R.id.data_sheet);
+//            buttonSheet = bottomSheetDialog.findViewById(R.id.button_sheet);
+    }
+
+
 }
