@@ -71,23 +71,63 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
         }
 
 
-        public void updateToCount(int idCount, int count, int lastCount) {
-            SQLiteDatabase db = this.getWritableDatabase();
-            ContentValues cv = new ContentValues();
+    public void updateToCount(int idCount, int count, int lastCount) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
 
-            Calendar calendar = Calendar.getInstance();
-            String time = (calendar.get(Calendar.DAY_OF_MONTH)) + "." + (calendar.get(Calendar.MONTH) + 1)+ "." + (calendar.get(Calendar.YEAR));
+        Calendar calendar = Calendar.getInstance();
+        String time = (calendar.get(Calendar.DAY_OF_MONTH)) + "." + (calendar.get(Calendar.MONTH) + 1)+ "." + (calendar.get(Calendar.YEAR));
 
-            cv.put(MyConstanta.COUNT, count);
-            cv.put(MyConstanta.LASTCOUNT, lastCount);
-            long id = db.update(MyConstanta.TABLE_NAME, cv, "id=?", new String[]{String.valueOf(idCount)});
+        cv.put(MyConstanta.COUNT, count);
+        cv.put(MyConstanta.LASTCOUNT, lastCount);
+        cv.put(MyConstanta.TIME, time);
+        long id = db.update(MyConstanta.TABLE_NAME, cv, "id=?", new String[]{String.valueOf(idCount)});
 
-            if (id == -1) {
-                Toast.makeText(context, "Ошибка!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "Успешно обновлено!", Toast.LENGTH_SHORT).show();
-            }
+        if (id == -1) {
+            Toast.makeText(context, "Ошибка!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Успешно обновлено!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    public void updateToSetting(int idCount, String title, int step) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(MyConstanta.TITLE, title);
+        cv.put(MyConstanta.STEP, step);
+        long id = db.update(MyConstanta.TABLE_NAME, cv, "id=?", new String[]{String.valueOf(idCount)});
+
+        if (id == -1) {
+            Toast.makeText(context, "Ошибка!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Успешно обновлено!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+    public void updateToLast() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(MyConstanta.LASTCOUNT, 0);
+        long id = db.update(MyConstanta.TABLE_NAME, cv, MyConstanta.LASTCOUNT + "= ?", null);
+
+        if (id == -1) {
+            Toast.makeText(context, "Ошибка!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Успешно обновлено!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
+
+
+
+
 
 
 
