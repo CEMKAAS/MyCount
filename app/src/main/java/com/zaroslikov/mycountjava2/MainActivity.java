@@ -1,6 +1,8 @@
 package com.zaroslikov.mycountjava2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.zaroslikov.mycountjava2.db.AdapterList;
 import com.zaroslikov.mycountjava2.db.MyDataBaseHelper;
 
 import java.util.Calendar;
@@ -25,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton plus, minus;
     private int countPush, stepPush, iD;
     private BottomSheetDialog bottomSheetDialogSetting, bottomSheetDialogList;
+    private AdapterList adapterList;
+
+    private RecyclerView recyclerView;
 
     private Button buttonSetting;
 
@@ -41,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         plus = findViewById(R.id.button_plus);
         minus = findViewById(R.id.button_minus);
+        recyclerView = findViewById(R.id.recyclerView);
 
         showBottomSheetList();
         showBottomSheetSetting();
@@ -151,6 +158,14 @@ public class MainActivity extends AppCompatActivity {
 
         bottomSheetDialogList = new BottomSheetDialog(this);
         bottomSheetDialogList.setContentView(R.layout.fragment_setting_bottom);
+
+
+        //Создание адаптера
+        adapterList = new AdapterList();
+
+        recyclerView.setAdapter(adapterList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
 
 //            animalsSpinerSheet = bottomSheetDialog.findViewById(R.id.menu);
 //            categorySpinerSheet = bottomSheetDialog.findViewById(R.id.menu2);
