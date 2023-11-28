@@ -58,6 +58,16 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
             return cursor;
         }
 
+    public Cursor allProject() {
+        String query = "SELECT * FROM " + MyConstanta.TABLE_NAME;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = null;
+        if (db != null) {
+            cursor = db.rawQuery(query, null);
+        }
+        return cursor;
+    }
 
         public void insertToDb(String title, int count, int step,int lastCount, String time) {
             SQLiteDatabase db = this.getWritableDatabase();

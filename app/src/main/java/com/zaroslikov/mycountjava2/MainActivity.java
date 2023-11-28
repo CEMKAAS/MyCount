@@ -5,8 +5,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -15,26 +17,29 @@ import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.zaroslikov.mycountjava2.db.AdapterList;
+import com.zaroslikov.mycountjava2.db.CountPerson;
 import com.zaroslikov.mycountjava2.db.MyDataBaseHelper;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
     private MyDataBaseHelper myDB;
     private TextView count;
-    private ImageButton plus, minus;
+    private ImageButton plus, minus, add;
     private int countPush, stepPush, iD;
     private BottomSheetDialog bottomSheetDialogSetting, bottomSheetDialogList;
     private AdapterList adapterList;
-
+    private List<CountPerson> countPerson;
     private RecyclerView recyclerView;
-
     private Button buttonSetting;
-
     private TextInputLayout nameEdit, stepEdit;
     private String appBarTitle;
 
@@ -48,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         plus = findViewById(R.id.button_plus);
         minus = findViewById(R.id.button_minus);
-//        recyclerView = findViewById(R.id.recyclerView);
+
 
         Cursor cursor = myDB.lastReadProject();
 
@@ -127,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         buttonSetting = bottomSheetDialogSetting.findViewById(R.id.button_sheet);
 
         nameEdit.getEditText().setText(appBarTitle);
+        stepEdit.getEditText().setText(stepPush);
 
         buttonSetting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,16 +168,63 @@ public class MainActivity extends AppCompatActivity {
 
         bottomSheetDialogList = new BottomSheetDialog(this);
         bottomSheetDialogList.setContentView(R.layout.fragment_setting_bottom);
+        recyclerView = findViewById(R.id.recyclerView);
 
+        countPerson = new ArrayList<>();
+        setAdapterList();
 
         //Создание адаптера
-//        adapterList = new AdapterList();
+        adapterList = new AdapterList(countPerson);
 
-//        recyclerView.setAdapter(adapterList);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapterList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        adapterList.setListener(new AdapterList.Listener() {
+            @Override
+            public void onClick(int position, CountPerson countPerson) {
+                appBarTitle = countPerson.getName();
+                countPush = countPerson.getCount();
+                stepPush = countPerson.getStep();
+                iD = countPerson.getId();
+
+            }
+        });
+
+        add = bottomSheetDialogList.findViewById(R.id.add_count);
+
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+                builder.setTitle("Добавить новый счетчик");
+                builder.setMessage("Укажите новый название");
 
 
-//            animalsSpinerSheet = bottomSheetDialog.findViewById(R.id.menu);
+                View view = layoutInflater.inflate(R.layout.my_dialog, null);
+                builder.setView(view);
+                Al
+
+
+                builder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                        String date = calendar.get(Calendar.DAY_OF_MONTH) + "." + (calendar.get(Calendar.MONTH) + 1) + "." + calendar.get(Calendar.YEAR);
+                        myDB.updateToDbProject(idProject, 1, date);
+                        replaceFragment(new MenuProjectFragment());
+                    }
+                });
+                builder.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                builder.show();
+            }
+        });
+
 //            categorySpinerSheet = bottomSheetDialog.findViewById(R.id.menu2);
 //
 //            animalsSpinerSheet.stVisibility(View.GONE);
@@ -181,5 +234,18 @@ public class MainActivity extends AppCompatActivity {
 //            buttonSheet = bottomSheetDialog.findViewById(R.id.button_sheet);
     }
 
+    public void setAdapterList() {
+        Cursor cursor = myDB.allProject();
+
+        countPerson.clear();
+
+        if (cursor != null || cursor.getCount() != 0) {
+            while (cursor.moveToNext()) {
+                countPerson.add(new CountPerson(cursor.getString(1), cursor.getInt(2), cursor.getString(5),
+                        cursor.getInt(3), cursor.getInt(0)));
+            }
+        }
+        cursor.close();
+    }
 
 }
