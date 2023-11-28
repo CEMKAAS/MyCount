@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -47,17 +48,14 @@ public class MainActivity extends AppCompatActivity {
 
         plus = findViewById(R.id.button_plus);
         minus = findViewById(R.id.button_minus);
-        recyclerView = findViewById(R.id.recyclerView);
-
-        showBottomSheetList();
-        showBottomSheetSetting();
+//        recyclerView = findViewById(R.id.recyclerView);
 
         Cursor cursor = myDB.lastReadProject();
 
-        if (cursor == null && cursor.getCount() == 0) {
+        if (cursor == null || cursor.getCount() == 0) {
             Calendar calendar = Calendar.getInstance();
             String time = (calendar.get(Calendar.DAY_OF_MONTH)) + "." + (calendar.get(Calendar.MONTH) + 1) + "." + (calendar.get(Calendar.YEAR));
-            myDB.insertToDb("Мой счет", 0, 1, 0, time);
+            myDB.insertToDb("Мой счет", 0, 1, 1, time);
             appBarTitle = "Мой счет";
             iD = 1;
             countPush = 0;
@@ -71,6 +69,11 @@ public class MainActivity extends AppCompatActivity {
         }
         cursor.close();
 
+        count.setText(String.valueOf(countPush));
+
+        showBottomSheetList();
+        showBottomSheetSetting();
+
         MaterialToolbar appBar = findViewById(R.id.topAppBar);
         appBar.setTitle(appBarTitle);
 
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             int position = item.getItemId();
             if (position == R.id.refresg) {
                 countPush = 0;
+                count.setText(String.valueOf(countPush));
                 Toast.makeText(this, "Обновление счета", Toast.LENGTH_SHORT).show();
             } else if (position == R.id.setting) {
                 bottomSheetDialogSetting.show();
@@ -115,12 +119,12 @@ public class MainActivity extends AppCompatActivity {
     public void showBottomSheetSetting() {
 
         bottomSheetDialogSetting = new BottomSheetDialog(this);
-        bottomSheetDialogSetting.setContentView(R.layout.fragment_bottom);
+        bottomSheetDialogSetting.setContentView(R.layout.fragment_setting_bottom);
 
         stepEdit = bottomSheetDialogSetting.findViewById(R.id.step_count);
         nameEdit = bottomSheetDialogSetting.findViewById(R.id.name_count);
 
-        buttonSetting = bottomSheetDialogSetting.findViewById(R.id.name_count);
+        buttonSetting = bottomSheetDialogSetting.findViewById(R.id.button_sheet);
 
         nameEdit.getEditText().setText(appBarTitle);
 
@@ -161,10 +165,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Создание адаптера
-        adapterList = new AdapterList();
+//        adapterList = new AdapterList();
 
-        recyclerView.setAdapter(adapterList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setAdapter(adapterList);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
 //            animalsSpinerSheet = bottomSheetDialog.findViewById(R.id.menu);

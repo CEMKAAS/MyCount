@@ -62,7 +62,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:hint="Период"
-        app:endIconDrawable="@drawable/baseline_calendar_month_24"
         app:endIconMode="custom"
         app:errorEnabled="true"
         app:helperText="Укажите период"

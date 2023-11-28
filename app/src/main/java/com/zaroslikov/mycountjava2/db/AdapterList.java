@@ -44,27 +44,28 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.MyViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
-        holder.nameTxt.setText(String.valueOf(products.get(position).getName()));
-        holder.categoryTxt.setText(String.valueOf(products.get(position).getCategory()));
-        holder.countTxt.setText(String.valueOf(products.get(position).getCount()));
-        holder.dateTxt.setText(String.valueOf(products.get(position).getDate()));
-        if (R.layout.my_row_add==myRow) {
-            holder.priceTxt.setText(String.valueOf(products.get(position).getPrice()));
-        }
-
-        holder.mainLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) {
-                    listener.onClick(position, products.get(position));
-                }
-            }
-        });
+//        holder.nameTxt.setText(String.valueOf(products.get(position).getName()));
+//        holder.categoryTxt.setText(String.valueOf(products.get(position).getCategory()));
+//        holder.countTxt.setText(String.valueOf(products.get(position).getCount()));
+//        holder.dateTxt.setText(String.valueOf(products.get(position).getDate()));
+//        if (R.layout.my_row_add==myRow) {
+//            holder.priceTxt.setText(String.valueOf(products.get(position).getPrice()));
+//        }
+//
+//        holder.mainLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (listener != null) {
+//                    listener.onClick(position, products.get(position));
+//                }
+//            }
+//        });
     }
 
     @Override
     public int getItemCount() {
-        return products.size();
+//        return products.size();
+        return 0;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
@@ -78,7 +79,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.MyViewHolder> 
             timeTxt = itemView.findViewById(R.id.time_list);
             countTxt = itemView.findViewById(R.id.count_list);
 
-            mainLayout = itemView.findViewById(R.id.mainLayout);
+//            mainLayout = itemView.findViewById(R.id.mainLayout);
         }
     }
 
