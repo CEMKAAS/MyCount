@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -182,10 +183,12 @@ public class MainActivity extends AppCompatActivity {
         adapterList.setListener(new AdapterList.Listener() {
             @Override
             public void onClick(int position, CountPerson countPerson) {
+                myDB.updateToLast();
                 appBarTitle = countPerson.getName();
                 countPush = countPerson.getCount();
                 stepPush = countPerson.getStep();
                 iD = countPerson.getId();
+                myDB.updateToCount(iD, countPush, 1);
 
             }
         });
@@ -195,26 +198,40 @@ public class MainActivity extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainActivity.this);
                 builder.setTitle("Добавить новый счетчик");
                 builder.setMessage("Укажите новый название");
 
+                TextInputLayout input = new TextInputLayout(MainActivity.this);
 
-                View view = layoutInflater.inflate(R.layout.my_dialog, null);
-                builder.setView(view);
-                Al
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                builder.setView(input);
 
-
-                builder.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Создать", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                        String date = calendar.get(Calendar.DAY_OF_MONTH) + "." + (calendar.get(Calendar.MONTH) + 1) + "." + calendar.get(Calendar.YEAR);
-                        myDB.updateToDbProject(idProject, 1, date);
-                        replaceFragment(new MenuProjectFragment());
+                        String name = input.getEditText().getText().toString();
+                        myDB.updateToLast();
+                        Calendar calendar = Calendar.getInstance();
+                        String time = (calendar.get(Calendar.DAY_OF_MONTH)) + "." + (calendar.get(Calendar.MONTH) + 1) + "." + (calendar.get(Calendar.YEAR));
+                        myDB.insertToDb(name, 0, 1, 1, time);
+
+                        Cursor cursor = myDB.lastReadProject();
+                        cursor.moveToNext();
+                        iD = cursor.getInt(0);
+                        appBarTitle = cursor.getString(1);
+                        countPush = cursor.getInt(2);
+                        stepPush = cursor.getInt(3);
+                        cursor.close();
+
+                        bottomSheetDialogList.cancel();
+
+
                     }
                 });
-                builder.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -225,13 +242,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//            categorySpinerSheet = bottomSheetDialog.findViewById(R.id.menu2);
-//
-//            animalsSpinerSheet.stVisibility(View.GONE);
-//            categorySpinerSheet.setVisibility(View.GONE);
-//
-//            dataSheet = bottomSheetDialog.findViewById(R.id.data_sheet);
-//            buttonSheet = bottomSheetDialog.findViewById(R.id.button_sheet);
+
     }
 
     public void setAdapterList() {
