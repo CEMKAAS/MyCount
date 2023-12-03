@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         appBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bottomSheetDialogSetting.show();
+                bottomSheetDialogList.show();
             }
         });
 
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         buttonSetting = bottomSheetDialogSetting.findViewById(R.id.button_sheet);
 
         nameEdit.getEditText().setText(appBarTitle);
-        stepEdit.getEditText().setText(stepPush);
+        stepEdit.getEditText().setText(String.valueOf(stepPush));
 
         buttonSetting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,8 +168,8 @@ public class MainActivity extends AppCompatActivity {
     public void showBottomSheetList() {
 
         bottomSheetDialogList = new BottomSheetDialog(this);
-        bottomSheetDialogList.setContentView(R.layout.fragment_setting_bottom);
-        recyclerView = findViewById(R.id.recyclerView);
+        bottomSheetDialogList.setContentView(R.layout.fragment_bottom);
+        recyclerView = bottomSheetDialogList.findViewById(R.id.recyclerView);
 
         countPerson = new ArrayList<>();
         setAdapterList();
