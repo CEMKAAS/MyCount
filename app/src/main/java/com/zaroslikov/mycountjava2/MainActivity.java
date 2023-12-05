@@ -1,11 +1,15 @@
 package com.zaroslikov.mycountjava2;
 
+import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
@@ -25,9 +30,11 @@ import com.zaroslikov.mycountjava2.db.AdapterList;
 import com.zaroslikov.mycountjava2.db.CountPerson;
 import com.zaroslikov.mycountjava2.db.MyDataBaseHelper;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private TextInputLayout nameEdit, stepEdit;
     private String appBarTitle;
 
+    private MaterialToolbar appBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
         plus = findViewById(R.id.button_plus);
         minus = findViewById(R.id.button_minus);
-
 
         Cursor cursor = myDB.lastReadProject();
 
@@ -77,10 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         count.setText(String.valueOf(countPush));
 
-        showBottomSheetList();
-        showBottomSheetSetting();
-
-        MaterialToolbar appBar = findViewById(R.id.topAppBar);
+        appBar = findViewById(R.id.topAppBar);
         appBar.setTitle(appBarTitle);
 
         appBar.setNavigationIcon(R.drawable.baseline_format_list_bulleted_24);
@@ -91,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 count.setText(String.valueOf(countPush));
                 Toast.makeText(this, "Обновление счета", Toast.LENGTH_SHORT).show();
             } else if (position == R.id.setting) {
+                showBottomSheetSetting();
                 bottomSheetDialogSetting.show();
             }
             return true;
@@ -98,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
         appBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bottomSheetDialogSetting.show();
+                showBottomSheetList();
+                bottomSheetDialogList.show();
             }
         });
 
@@ -133,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         buttonSetting = bottomSheetDialogSetting.findViewById(R.id.button_sheet);
 
         nameEdit.getEditText().setText(appBarTitle);
-        stepEdit.getEditText().setText(stepPush);
+        stepEdit.getEditText().setText(String.valueOf(stepPush));
 
         buttonSetting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,11 +162,13 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    String name = nameEdit.getEditText().getText().toString().replaceAll(",", ".").replaceAll("[^\\d.]", "");
-                    int step = Integer.parseInt(stepEdit.getEditText().getText().toString().replaceAll(",", ".").replaceAll("[^\\d.]", ""));
+                    appBarTitle = nameEdit.getEditText().getText().toString();
+                    stepPush = Integer.parseInt(stepEdit.getEditText().getText().toString().replaceAll(",", ".").replaceAll("[^\\d.]", ""));
+                    myDB.updateToSetting(iD, appBarTitle, stepPush);
 
-                    myDB.updateToSetting(iD, name, step);
+                    appBar.setTitle(appBarTitle);
 
+                    bottomSheetDialogSetting.dismiss();
                 }
             }
         });
@@ -168,8 +177,19 @@ public class MainActivity extends AppCompatActivity {
     public void showBottomSheetList() {
 
         bottomSheetDialogList = new BottomSheetDialog(this);
-        bottomSheetDialogList.setContentView(R.layout.fragment_setting_bottom);
-        recyclerView = findViewById(R.id.recyclerView);
+//        bottomSheetDialogList.setContentView(R.layout.fragment_bottom);
+
+
+        View bottomSheetView = LayoutInflater.from(this).inflate(R.layout.fragment_bottom, null);
+        bottomSheetDialogList.setContentView(bottomSheetView);
+
+        BottomSheetBehavior<View> bottomSheetBehavior = BottomSheetBehavior.from((View) bottomSheetView.getParent());
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        LinearLayout layout = bottomSheetDialogList.findViewById(R.id.ll);
+        layout.setMinimumHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
+
+        recyclerView = bottomSheetDialogList.findViewById(R.id.recyclerView);
 
         countPerson = new ArrayList<>();
         setAdapterList();
@@ -190,6 +210,11 @@ public class MainActivity extends AppCompatActivity {
                 iD = countPerson.getId();
                 myDB.updateToCount(iD, countPush, 1);
 
+                appBar.setTitle(appBarTitle);
+                count.setText(String.valueOf(countPush));
+
+                bottomSheetDialogList.dismiss();
+
             }
         });
 
@@ -198,21 +223,27 @@ public class MainActivity extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                View view1 = LayoutInflater.from(MainActivity.this).inflate(R.layout.dialog_edit, null);
+                TextInputEditText editText1 = view1.findViewById(R.id.editText);
+
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainActivity.this);
                 builder.setTitle("Добавить новый счетчик");
                 builder.setMessage("Укажите новый название");
+                builder.setView(view1);
 
-                TextInputLayout input = new TextInputLayout(MainActivity.this);
 
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                input.setLayoutParams(lp);
-                builder.setView(input);
+//                TextInputLayout input = new TextInputLayout(MainActivity.this);
+//                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+//                        LinearLayout.LayoutParams.MATCH_PARENT);
+//                input.setLayoutParams(lp);
+//                builder.setView(input);
 
                 builder.setPositiveButton("Создать", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String name = input.getEditText().getText().toString();
+//                        textView.setText(MessageFormat.format("Typed text is: {0}", Objects.requireNonNull(editText.getText())));
+                        String name = editText1.getText().toString();
                         myDB.updateToLast();
                         Calendar calendar = Calendar.getInstance();
                         String time = (calendar.get(Calendar.DAY_OF_MONTH)) + "." + (calendar.get(Calendar.MONTH) + 1) + "." + (calendar.get(Calendar.YEAR));
@@ -241,7 +272,6 @@ public class MainActivity extends AppCompatActivity {
                 builder.show();
             }
         });
-
 
     }
 
