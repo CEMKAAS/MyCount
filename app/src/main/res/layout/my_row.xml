@@ -3,35 +3,54 @@
     android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="8"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:layout_width="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TextAppearance.MyApp.DisplaySmall4"
+                android:id="@+id/name_list"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_width="match_parent"
+                android:text="Nord" />
+
+            <TextView
+                style="@style/TextAppearance.MyApp.DisplaySmall4"
+                android:id="@+id/time_list"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_width="match_parent"
+                android:text="24/11/223" />
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/name_list"
-            android:layout_width="match_parent"
+            style="@style/TextAppearance.MyApp.DisplaySmall4"
+            android:gravity="center"
+            android:id="@+id/count_list"
+            android:layout_gravity="center"
             android:layout_height="wrap_content"
-            android:text="Nord" />
-
-        <TextView
-            android:id="@+id/time_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="24/11/223" />
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:text="30" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/count_list"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_weight="1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="30" />
-
+    <View
+        android:background="?android:attr/listDivider"
+        android:id="@+id/divider"
+        android:layout_height="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_width="match_parent" />
 </LinearLayout>

@@ -46,7 +46,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.MyViewHolder> 
 
         holder.nameTxt.setText(String.valueOf(countPerson.get(position).getName()));
         holder.countTxt.setText(String.valueOf(countPerson.get(position).getCount()));
-        holder.timeTxt.setText(String.valueOf(countPerson.get(position).getTime()));
+        holder.timeTxt.setText("Последние изм.: "+ countPerson.get(position).getTime());
         holder.mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,6 +55,7 @@ public class AdapterList extends RecyclerView.Adapter<AdapterList.MyViewHolder> 
                 }
             }
         });
+
     }
 
     @Override

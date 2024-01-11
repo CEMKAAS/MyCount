@@ -1,17 +1,16 @@
 package com.zaroslikov.mycountjava2;
 
-import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -26,22 +25,32 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.yandex.mobile.ads.banner.BannerAdEventListener;
+import com.yandex.mobile.ads.banner.BannerAdSize;
+import com.yandex.mobile.ads.banner.BannerAdView;
+import com.yandex.mobile.ads.common.AdError;
+import com.yandex.mobile.ads.common.AdRequest;
+import com.yandex.mobile.ads.common.AdRequestConfiguration;
+import com.yandex.mobile.ads.common.AdRequestError;
+import com.yandex.mobile.ads.common.AdSize;
+import com.yandex.mobile.ads.common.ImpressionData;
+import com.yandex.mobile.ads.interstitial.InterstitialAd;
+import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener;
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener;
+import com.yandex.mobile.ads.interstitial.InterstitialAdLoader;
 import com.zaroslikov.mycountjava2.db.AdapterList;
 import com.zaroslikov.mycountjava2.db.CountPerson;
 import com.zaroslikov.mycountjava2.db.MyDataBaseHelper;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
-import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
     private MyDataBaseHelper myDB;
     private TextView count;
-    private ImageButton plus, minus, add;
+    private ImageButton plus, minus, add, back;
     private int countPush, stepPush, iD;
     private BottomSheetDialog bottomSheetDialogSetting, bottomSheetDialogList;
     private AdapterList adapterList;
@@ -50,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonSetting;
     private TextInputLayout nameEdit, stepEdit;
     private String appBarTitle;
+    @Nullable
+    private InterstitialAd mInterstitialAd = null;
+    @Nullable
+    private InterstitialAdLoader mInterstitialAdLoader = null;
+    private BannerAdView mBannerAdView;//Реклама от Яндекса
 
     private MaterialToolbar appBar;
 
@@ -94,11 +108,14 @@ public class MainActivity extends AppCompatActivity {
             if (position == R.id.refresg) {
                 countPush = 0;
                 count.setText(String.valueOf(countPush));
-                Toast.makeText(this, "Обновление счета", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "Обновление счета", Toast.LENGTH_SHORT).show();
             } else if (position == R.id.setting) {
                 showBottomSheetSetting();
                 bottomSheetDialogSetting.show();
+            } else if (position == R.id.delet) {
+                delete();
             }
+
             return true;
         });
         appBar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -126,7 +143,79 @@ public class MainActivity extends AppCompatActivity {
                 myDB.updateToCount(iD, countPush, 1);
             }
         });
+
+        mBannerAdView = (BannerAdView) findViewById(R.id.banner_ad_view);
+        mBannerAdView.setAdUnitId("R-M-4928527-1"); //Вставляется свой айди от яндекса
+        mBannerAdView.setAdSize(BannerAdSize.stickySize(this, 320));//Размер банера
+        final AdRequest adRequest = new AdRequest.Builder().build();
+        mBannerAdView.loadAd(adRequest);
+
+//рекламав
+
+
+        mInterstitialAdLoader = new InterstitialAdLoader(this);
+        mInterstitialAdLoader.setAdLoadListener(new InterstitialAdLoadListener() {
+            @Override
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                mInterstitialAd = interstitialAd;
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull AdRequestError adRequestError) {
+            }
+        });
+        loadInterstitialAd();
     }
+
+    private void loadInterstitialAd() {
+        if (mInterstitialAdLoader != null ) {
+            final AdRequestConfiguration adRequestConfiguration =
+                    new AdRequestConfiguration.Builder("R-M-4928527-2").build();
+            mInterstitialAdLoader.loadAd(adRequestConfiguration);
+        }
+    }
+
+
+    private void showAd() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd.setAdEventListener(new InterstitialAdEventListener() {
+                @Override
+                public void onAdShown() {
+                    // Called when ad is shown.
+                }
+
+                @Override
+                public void onAdFailedToShow(@NonNull final AdError adError) {
+                    // Called when an InterstitialAd failed to show.
+                }
+
+                @Override
+                public void onAdDismissed() {
+                    // Called when ad is dismissed.
+                    // Clean resources after Ad dismissed
+                    if (mInterstitialAd != null) {
+                        mInterstitialAd.setAdEventListener(null);
+                        mInterstitialAd = null;
+                    }
+
+                    // Now you can preload the next interstitial ad.
+                    loadInterstitialAd();
+                }
+
+                @Override
+                public void onAdClicked() {
+                    // Called when a click is recorded for an ad.
+                }
+
+                @Override
+                public void onAdImpression(@Nullable final ImpressionData impressionData) {
+                    // Called when an impression is recorded for an ad.
+                }
+            });
+            mInterstitialAd.show(this);
+        }
+    }
+
 
     //Добавляем bottobSheet
     public void showBottomSheetSetting() {
@@ -219,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         add = bottomSheetDialogList.findViewById(R.id.add_count);
-
+        back = bottomSheetDialogList.findViewById(R.id.back);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -229,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
 
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainActivity.this);
                 builder.setTitle("Добавить новый счетчик");
-                builder.setMessage("Укажите новый название");
+                builder.setMessage("Укажите название");
                 builder.setView(view1);
 
 
@@ -250,15 +339,21 @@ public class MainActivity extends AppCompatActivity {
                         myDB.insertToDb(name, 0, 1, 1, time);
 
                         Cursor cursor = myDB.lastReadProject();
+
                         cursor.moveToNext();
                         iD = cursor.getInt(0);
                         appBarTitle = cursor.getString(1);
                         countPush = cursor.getInt(2);
                         stepPush = cursor.getInt(3);
+
                         cursor.close();
+
+                        appBar.setTitle(appBarTitle);
+                        count.setText(String.valueOf(countPush));
 
                         bottomSheetDialogList.cancel();
 
+                        showAd();
 
                     }
                 });
@@ -273,7 +368,60 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialogList.cancel();
+            }
+        });
+
     }
+
+    public void delete() {
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainActivity.this);
+        builder.setTitle("Удалить счетчик " + appBarTitle + " ?");
+        builder.setMessage("Вы уверены, что хотите удалить счетчик?");
+        builder.setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                myDB.deleteOneRow(iD);
+
+                Cursor cursor = myDB.allProject();
+
+                if (cursor == null || cursor.getCount() == 0) {
+                    Calendar calendar = Calendar.getInstance();
+                    String time = (calendar.get(Calendar.DAY_OF_MONTH)) + "." + (calendar.get(Calendar.MONTH) + 1) + "." + (calendar.get(Calendar.YEAR));
+                    myDB.insertToDb("Мой счет", 0, 1, 1, time);
+                    appBarTitle = "Мой счет";
+                    iD = 1;
+                    countPush = 0;
+                    stepPush = 1;
+                } else {
+                    cursor.moveToNext();
+                    iD = cursor.getInt(0);
+                    appBarTitle = cursor.getString(1);
+                    countPush = cursor.getInt(2);
+                    stepPush = cursor.getInt(3);
+                }
+                cursor.close();
+
+                appBar.setTitle(appBarTitle);
+                count.setText(String.valueOf(countPush));
+
+            }
+        });
+        builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.show();
+    }
+
 
     public void setAdapterList() {
         Cursor cursor = myDB.allProject();

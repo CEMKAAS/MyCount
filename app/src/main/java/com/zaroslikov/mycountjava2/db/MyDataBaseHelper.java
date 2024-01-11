@@ -8,9 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.common.util.ScopeUtil;
-import com.zaroslikov.mycountjava2.MainActivity;
-
 import java.util.Calendar;
 
 public class MyDataBaseHelper extends SQLiteOpenHelper {
@@ -94,9 +91,9 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
         long id = db.update(MyConstanta.TABLE_NAME, cv, "id=?", new String[]{String.valueOf(idCount)});
 
         if (id == -1) {
-            Toast.makeText(context, "Ошибка!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Ошибка!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(context, "Успешно обновлено!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Успешно обновлено!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -110,9 +107,9 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
         long id = db.update(MyConstanta.TABLE_NAME, cv, "id=?", new String[]{String.valueOf(idCount)});
 
         if (id == -1) {
-            Toast.makeText(context, "Ошибка!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Ошибка!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(context, "Успешно обновлено!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Успешно обновлено!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -122,16 +119,25 @@ public class MyDataBaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(MyConstanta.LASTCOUNT, 0);
-        long id = db.update(MyConstanta.TABLE_NAME, cv, MyConstanta.LASTCOUNT + "= ?", null);
+        long id = db.update(MyConstanta.TABLE_NAME, cv, null, null);
 
         if (id == -1) {
-            Toast.makeText(context, "Ошибка!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Ошибка!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(context, "Успешно обновлено!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, "Успешно обновлено!", Toast.LENGTH_SHORT).show();
         }
     }
 
-
+    public void deleteOneRow(int int_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String row_id = String.valueOf(int_id);
+        long result = db.delete(MyConstanta.TABLE_NAME, "id=?", new String[]{row_id});
+        if (result == -1) {
+//            Toast.makeText(context, "Ошибка.", Toast.LENGTH_SHORT).show();
+        } else {
+//            Toast.makeText(context, "Успешно удаленно.", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
 

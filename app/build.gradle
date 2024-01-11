@@ -37,8 +37,10 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
+    //Реклама яндекс
+    implementation 'com.yandex.android:mobileads:6.3.0'
     //АppMetrica
-    implementation 'com.yandex.android:mobmetricalib:5.3.0'
+    implementation 'io.appmetrica.analytics:analytics:6.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     testImplementation 'junit:junit:4.13.2'

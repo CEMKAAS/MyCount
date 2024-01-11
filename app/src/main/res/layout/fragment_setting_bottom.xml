@@ -57,6 +57,45 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_height="3dp"
+            android:background="?android:attr/listDivider" />
+
+
+        <TextView
+            style="@style/TextAppearance.MyApp.DisplaySmall4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="21dp"
+            android:layout_gravity="center"
+            android:text="Мой Счет v1.00" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="18dp"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/robotoregular"
+            android:layout_gravity="center"
+            android:lineSpacingExtra="8sp"
+            android:layout_marginBottom="15dp"
+            android:text="Дорогой друг! \nНе забудь вступить в нашу группу ВК!" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:linksClickable="true"
+            android:layout_gravity="center"
+            android:textSize="21dp"
+            android:text="https://vk.com/bagesmakestudios" />
+
 
     </LinearLayout>
 

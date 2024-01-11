@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">MyCountJava2</string>
+    <string name="app_name">Мой Счёт</string>
+    <string name="groupVK"><a href="https://vk.com/bagesmakestudios">Вступай!</a></string>
+<!-- На будущие   <string name="groupVK">Support: <a href="https://vk.com/bagesmakestudios">Группа ВК</a></string>-->
 </resources>
