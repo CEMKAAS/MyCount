@@ -1,7 +1,5 @@
 package com.zaroslikov.mycountjava2;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -279,6 +277,8 @@ public class MainActivity extends AppCompatActivity {
         layout.setMinimumHeight(Resources.getSystem().getDisplayMetrics().heightPixels);
 
         recyclerView = bottomSheetDialogList.findViewById(R.id.recyclerView);
+        bottomSheetDialogList.setContentView(R.layout.fragment_bottom);
+        recyclerView = bottomSheetDialogList.findViewById(R.id.recyclerView);
 
         countPerson = new ArrayList<>();
         setAdapterList();
@@ -321,18 +321,17 @@ public class MainActivity extends AppCompatActivity {
                 builder.setMessage("Укажите название");
                 builder.setView(view1);
 
+                TextInputLayout input = new TextInputLayout(MainActivity.this);
 
-//                TextInputLayout input = new TextInputLayout(MainActivity.this);
-//                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-//                        LinearLayout.LayoutParams.MATCH_PARENT);
-//                input.setLayoutParams(lp);
-//                builder.setView(input);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                builder.setView(input);
 
                 builder.setPositiveButton("Создать", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-//                        textView.setText(MessageFormat.format("Typed text is: {0}", Objects.requireNonNull(editText.getText())));
-                        String name = editText1.getText().toString();
+                        String name = input.getEditText().getText().toString();
                         myDB.updateToLast();
                         Calendar calendar = Calendar.getInstance();
                         String time = (calendar.get(Calendar.DAY_OF_MONTH)) + "." + (calendar.get(Calendar.MONTH) + 1) + "." + (calendar.get(Calendar.YEAR));
