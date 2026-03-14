@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'com.zaroslikov.mycountjava2'
-    compileSdk 33
+    compileSdk = 36
 
     defaultConfig {
         applicationId "com.zaroslikov.mycountjava2"
@@ -38,7 +38,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
     //Реклама яндекс
-    implementation 'com.yandex.android:mobileads:6.3.0'
+    implementation 'com.yandex.android:mobileads:7.18.2'
     //АppMetrica
     implementation 'io.appmetrica.analytics:analytics:6.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
